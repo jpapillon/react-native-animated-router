@@ -10,21 +10,16 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated,
+  Dimensions
 } from 'react-native';
 
 import Screen from './screen';
 
 import {Router, Actions} from './Router';
 
-console.log(Actions);
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import Scene from './Scene';
 
 class HomeScreen extends Component {
   render() {
@@ -71,14 +66,15 @@ class WelcomeScreen extends Component {
   }
 }
 
-export default class App extends Component<{}> {
+const routes = {
+  'home': HomeScreen,
+  'welcome': WelcomeScreen
+}
+export default class App extends Component {
   render() {
     return (
-      <Router routes={{
-        home: HomeScreen,
-        welcome: WelcomeScreen
-      }} />
-    );
+      <Router routes={routes} />
+    )
   }
 }
 
@@ -93,10 +89,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
   },
 });

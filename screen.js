@@ -12,14 +12,14 @@ export default class Screen {
     return this._name;
   }
 
-  getPopAnimation(otherScreen) {
-    // screen is popped and otherScreen will be shown
-    return 'pop' + this.name + ' and show ' + otherScreen.name;
-  }
-
   getPushAnimation(otherScreen) {
     // screen is pushed over otherScreen
     return 'push ' + this.name + ' over ' + otherScreen.name;
+  }
+
+  getPopAnimation(otherScreen) {
+    // screen is popped and otherScreen will be shown
+    return 'pop' + this.name + ' and show ' + otherScreen.name;
   }
 
   getFocusAnimation(otherScreen) {
