@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 
 const {width, height} = Dimensions.get('window');
+const ANIMATION_DURATION = 250;
 export default class Scene extends Component {
   _progress = new Animated.Value(0)
 
@@ -16,21 +17,31 @@ export default class Scene extends Component {
   _launchIncrement(callback) {
     Animated.timing(this._progress, {
       toValue: 1,
+      duration: ANIMATION_DURATION,
       useNativeDriver: true
-    }).start(callback);
+    }).start(result => {
+      if (result.finished) {
+        callback();
+      }
+    });
   }
 
   _launchDecrement(callback) {
     Animated.timing(this._progress, {
       toValue: 0,
+      duration: ANIMATION_DURATION,
       useNativeDriver: true
-    }).start(callback);
+    }).start(result => {
+      if (result.finished) {
+        callback();
+      }
+    });
   }
 
   _getPushAnimation() {
     const translateX = this._progress.interpolate({
       inputRange: [0, 1],
-      outputRange: [width/2, 0],
+      outputRange: [width, 0],
     });
 
     return {
@@ -56,7 +67,7 @@ export default class Scene extends Component {
   _getFocusAnimation() {
     const scale = this._progress.interpolate({
       inputRange: [0, 1],
-      outputRange: [0.2, 1],
+      outputRange: [0.8, 1],
     });
 
     return {
@@ -69,7 +80,7 @@ export default class Scene extends Component {
   _getPopAnimation() {
     const translateX = this._progress.interpolate({
       inputRange: [0, 1],
-      outputRange: [width/2, 0],
+      outputRange: [width, 0],
     });
 
     return {
@@ -104,17 +115,25 @@ export default class Scene extends Component {
         this._launchIncrement(() => this.props.onAminationDone('focus'));
       } else if (nextProps.action === 'pop') {
         this._launchDecrement(() => this.props.onAminationDone('pop'));
+      } else if (nextProps.action === 'reset') {
+        this._progress.setValue(1);
+        this.props.onAminationDone('reset');
       }
     }
   }
 
-  componentWillMount() {
-    this._launchIncrement(() => this.props.onAminationDone('push'));
+  componentDidMount() {
+    if (this.props.action === 'reset') {
+      this._progress.setValue(1);
+      this.props.onAminationDone(this.props.action);
+    } else {
+      this._launchIncrement(() => this.props.onAminationDone(this.props.action));
+    }
   }
 
   render() {
     return (
-      <Animated.View style={[{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}, this._getAnimation()]}>
+      <Animated.View style={[{position: 'absolute', width, height, backgroundColor: 'red'}, this._getAnimation()]}>
         {this.props.children}
       </Animated.View>
     );

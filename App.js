@@ -21,13 +21,13 @@ import {Router, Actions} from './Router';
 
 import Scene from './Scene';
 
-class HomeScreen extends Component {
+class Page1Screen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>HOME!</Text>
-        <TouchableOpacity onPress={() => Actions.push("welcome", {})}>
-          <Text>push</Text>
+        <Text>PAGE 1!</Text>
+        <TouchableOpacity onPress={() => Actions.push("page2", {})}>
+          <Text>push page 2</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Actions.pop()}>
           <Text>pop</Text>
@@ -35,8 +35,8 @@ class HomeScreen extends Component {
         <TouchableOpacity onPress={() => Actions.reset()}>
           <Text>reset</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => Actions.reset("welcome", {})}>
-          <Text>reset to screen</Text>
+        <TouchableOpacity onPress={() => Actions.reset("page2", {})}>
+          <Text>reset to page2</Text>
         </TouchableOpacity>
       </View>
     )
@@ -44,13 +44,13 @@ class HomeScreen extends Component {
 }
 
 
-class WelcomeScreen extends Component {
+class Page2Screen extends Component {
   render() {
     return (
       <View style={[styles.container, {backgroundColor: '#eee'}]}>
-        <Text>WELCOME!</Text>
-        <TouchableOpacity onPress={() => Actions.push("home", {})}>
-          <Text>push</Text>
+        <Text>PAGE 2!</Text>
+        <TouchableOpacity onPress={() => Actions.push("page3", {})}>
+          <Text>push page 3</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Actions.pop()}>
           <Text>pop</Text>
@@ -58,8 +58,31 @@ class WelcomeScreen extends Component {
         <TouchableOpacity onPress={() => Actions.reset()}>
           <Text>reset</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => Actions.reset("home", {})}>
-          <Text>reset to screen</Text>
+        <TouchableOpacity onPress={() => Actions.reset("page3", {})}>
+          <Text>reset to page3</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+}
+
+
+class Page3Screen extends Component {
+  render() {
+    return (
+      <View style={[styles.container, {backgroundColor: 'pink'}]}>
+        <Text>PAGE 3!</Text>
+        <TouchableOpacity onPress={() => Actions.push("page1", {})}>
+          <Text>push page 1</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => Actions.pop()}>
+          <Text>pop</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => Actions.reset()}>
+          <Text>reset</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => Actions.reset("page1", {})}>
+          <Text>reset to page1</Text>
         </TouchableOpacity>
       </View>
     )
@@ -67,13 +90,16 @@ class WelcomeScreen extends Component {
 }
 
 const routes = {
-  'home': HomeScreen,
-  'welcome': WelcomeScreen
+  'page1': Page1Screen,
+  'page2': Page2Screen,
+  'page3': Page3Screen
 }
 export default class App extends Component {
   render() {
     return (
+      <View style={{flex: 1, backgroundColor: 'red'}}>
       <Router routes={routes} />
+      </View>
     )
   }
 }
