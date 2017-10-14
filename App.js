@@ -43,7 +43,6 @@ class Page1Screen extends Component {
   }
 }
 
-
 class Page2Screen extends Component {
   render() {
     return (
@@ -90,15 +89,141 @@ class Page3Screen extends Component {
 }
 
 const routes = {
-  'page1': Page1Screen,
-  'page2': Page2Screen,
-  'page3': Page3Screen
+  page1: Page1Screen,
+  page2: Page2Screen,
+  page3: Page3Screen
+};
+
+const {width, height} = Dimensions.get('window');
+const animations = {
+  'default': {
+    duration: 250,
+    push: {
+      duration: 1000,
+      fn: progress => {
+        const translateX = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [width, 0],
+        });
+
+        return {
+          transform: [{
+            translateX
+          }]
+        }
+      }
+    },
+    blur: {
+      fn: progress => {
+        const rotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['0deg', '90deg'],
+        });
+
+        return {
+          transform: [{
+            rotate
+          }]
+        }
+      }
+    },
+    focus: {
+      fn: progress => {
+        const rotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['90deg', '0deg'],
+        });
+
+        return {
+          transform: [{
+            rotate
+          }]
+        }
+      }
+    },
+    pop: {
+      fn: progress => {
+        const rotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['90deg', '0deg'],
+        });
+
+        return {
+          transform: [{
+            rotate
+          }]
+        }
+      }
+    },
+  },
+  custom: [{
+    from: 'page1',
+    to: 'page2',
+    push: {
+      fn: progress => {
+        const translateX = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [width, 0],
+        });
+
+        return {
+          transform: [{
+            translateX
+          }]
+        }
+      }
+    },
+    blur: {
+      fn: progress => {
+        const rotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['0deg', '90deg'],
+        });
+
+        return {
+          transform: [{
+            rotate
+          }]
+        }
+      }
+    },
+    focus: {
+      fn: progress => {
+        const rotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['90deg', '0deg'],
+        });
+
+        return {
+          transform: [{
+            rotate
+          }]
+        }
+      }
+    },
+    pop: {
+      fn: progress => {
+        const rotate = progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['90deg', '0deg'],
+        });
+
+        return {
+          transform: [{
+            rotate
+          }]
+        }
+      }
+    },
+    duration: 250
+  }]
 }
+
 export default class App extends Component {
   render() {
     return (
       <View style={{flex: 1, backgroundColor: 'red'}}>
-      <Router routes={routes} />
+        <Router routes={routes} animations={animations}/>
       </View>
     )
   }

@@ -10,8 +10,8 @@ export default class Scene extends Component {
   _progress = new Animated.Value(0)
 
   static defaultProps = {
-    action: 'push',
-    onAminationDone: () => {}
+    action: 'reset',
+    onAnimationDone: () => {}
   }
 
   _launchIncrement(callback) {
@@ -91,33 +91,23 @@ export default class Scene extends Component {
   }
 
   _getAnimation() {
-    switch (this.props.action) {
-      case 'push':
-        return this._getPushAnimation();
-      break;
-      case 'blur':
-        return this._getBlurAnimation();
-      break;
-      case 'focus':
-        return this._getFocusAnimation();
-      break;
-      case 'pop':
-        return this._getPopAnimation();
-      break;
+    if (this.props.animation && this.props.animation.fn) {
+      // Use given transition animation
+      return this.props.animation.fn(this._progress);
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.action) {
       if (nextProps.action === 'blur') {
-        this._launchDecrement(() => this.props.onAminationDone('blur'));
+        this._launchDecrement(() => this.props.onAnimationDone('blur'));
       } else if (nextProps.action === 'focus') {
-        this._launchIncrement(() => this.props.onAminationDone('focus'));
+        this._launchIncrement(() => this.props.onAnimationDone('focus'));
       } else if (nextProps.action === 'pop') {
-        this._launchDecrement(() => this.props.onAminationDone('pop'));
+        this._launchDecrement(() => this.props.onAnimationDone('pop'));
       } else if (nextProps.action === 'reset') {
         this._progress.setValue(1);
-        this.props.onAminationDone('reset');
+        this.props.onAnimationDone('reset');
       }
     }
   }
@@ -125,9 +115,9 @@ export default class Scene extends Component {
   componentDidMount() {
     if (this.props.action === 'reset') {
       this._progress.setValue(1);
-      this.props.onAminationDone(this.props.action);
+      this.props.onAnimationDone(this.props.action);
     } else {
-      this._launchIncrement(() => this.props.onAminationDone(this.props.action));
+      this._launchIncrement(() => this.props.onAnimationDone(this.props.action));
     }
   }
 

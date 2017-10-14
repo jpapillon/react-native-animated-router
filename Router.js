@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import Scene from './Scene';
 import stackManager from './stackManager';
+import AnimationManager from './AnimationManager';
 
 class RouterSingleton {
   static setInstance(inst) {
@@ -29,7 +30,8 @@ export const Actions = {
     const inst = RouterSingleton.getInstance();
     if (inst.state.stack.length > 1) {
       inst._queue.push({
-        action: 'pop'
+        action: 'pop',
+        routeName: inst.state.stack[inst.state.stack.length - 1].routeName
       });
       inst._triggerQueue();
     }
@@ -47,6 +49,8 @@ export const Actions = {
 }
 
 export class Router extends Component {
+  _animationManager = new AnimationManager(this.props.animations)
+
   state = {
     removed: false,
     action: 'push',
@@ -57,7 +61,6 @@ export class Router extends Component {
 
   _triggerQueue() {
     if (!this._updating && this._queue.length > 0) {
-      console.log('_triggerQueue go go go');
       let queuedAction = this._queue.shift();
       this._executeAction(queuedAction.action, queuedAction.routeName ? queuedAction.routeName : null, queuedAction.params);
     } else {
@@ -83,6 +86,8 @@ export class Router extends Component {
   }
 
   _executeAction(action, routeName, params) {
+
+      console.log(action, routeName, params, this.props.routes[routeName]);
     if (routeName && !this.props.routes[routeName]) {
       // Route does not exist
       return;
@@ -136,26 +141,34 @@ export class Router extends Component {
     return action;
   }
 
+  _getAnimation(index, action) {
+    const nbScenes = this.state.stack.length;
+
+    if (nbScenes > 1 && index >= nbScenes - 2) {
+      // One of the last two scenes
+      const prevLastRoute = this.state.stack[nbScenes - 2];
+      const lastRoute = this.state.stack[nbScenes - 1];
+
+      return this._animationManager.getAnimation(prevLastRoute.routeName, lastRoute.routeName, action);
+    }
+
+    return this._animationManager.getDefaultAnimation(action);
+  }
+
   _onAnimationDone(index) {
     this.state.stack[index]._isReady = true;
-    console.log('Route ' + index + ' finished');
-    console.log(this.state.stack);
 
     if (this.state.stack.every(route => route._isReady)) {
       // Every route has finished with the animation
-      console.log('All routes finished. GO!');
       if (this.state.action === 'pop') {
         // Action was to pop the screen, pop it first and go
-        console.log('TRIGGER AFTER POP');
         this._removeAfterPop()
       } else {
         // Action was not 'pop', let's trigger now
-        console.log('TRIGGER NOW');
         this._updating = false;
         this._triggerQueue();
       }
     }
-
   }
 
   componentWillUpdate() {
@@ -164,7 +177,6 @@ export class Router extends Component {
 
   componentDidUpdate() {
     if (this._updating && this._triggerAfterUpdate) {
-      console.log('component DID update');
       this._triggerAfterUpdate = false;
       this._updating = false;
       this._triggerQueue();
@@ -172,18 +184,24 @@ export class Router extends Component {
   }
 
   render() {
-    console.log(this.state.stack)
     return (
       <View style={{flex: 1}}>
         {
           this.state.stack.map((route, index) => {
             route._isReady = false;
             const action = this._getAction(index);
+            const animation = this._getAnimation(index, action);
             const RouteScreen = this.props.routes[route.routeName];
             return (
-              <Scene key={index} action={action} routeName={route.routeName} onAminationDone={action => {
-                this._onAnimationDone(index);
-              }}>
+              <Scene
+                key={index}
+                action={action}
+                routeName={route.routeName}
+                animation={animation}
+                onAnimationDone={action => {
+                  this._onAnimationDone(index);
+                }}
+              >
                 <RouteScreen />
               </Scene>
             );
