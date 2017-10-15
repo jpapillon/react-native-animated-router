@@ -15,8 +15,6 @@ import {
   Dimensions
 } from 'react-native';
 
-import Screen from './screen';
-
 import {Router, Actions} from './Router';
 
 import Scene from './Scene';

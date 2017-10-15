@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { View } from 'react-native';
 
 import Scene from './Scene';
-import stackManager from './stackManager';
 import AnimationManager from './AnimationManager';
 
 class RouterSingleton {
@@ -28,13 +27,11 @@ export const Actions = {
 
   pop() {
     const inst = RouterSingleton.getInstance();
-    if (inst.state.stack.length > 1) {
-      inst._queue.push({
-        action: 'pop',
-        routeName: inst.state.stack[inst.state.stack.length - 1].routeName
-      });
-      inst._triggerQueue();
-    }
+    inst._queue.push({
+      action: 'pop',
+      routeName: inst.state.stack[inst.state.stack.length - 1].routeName
+    });
+    inst._triggerQueue();
   },
 
   reset(routeName, params) {
@@ -62,6 +59,11 @@ export class Router extends Component {
   _triggerQueue() {
     if (!this._updating && this._queue.length > 0) {
       let queuedAction = this._queue.shift();
+      if (queuedAction.action === 'pop' && this.state.stack.length <= 1) {
+        // Don't pop more last scene
+        return;
+      }
+
       this._executeAction(queuedAction.action, queuedAction.routeName ? queuedAction.routeName : null, queuedAction.params);
     } else {
       this._updating = false;

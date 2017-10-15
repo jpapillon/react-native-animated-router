@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 
 const {width, height} = Dimensions.get('window');
-const ANIMATION_DURATION = 250;
+const ANIMATION_DURATION = 1000;
 export default class Scene extends Component {
   _progress = new Animated.Value(0)
 
