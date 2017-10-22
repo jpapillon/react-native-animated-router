@@ -88,8 +88,6 @@ export class Router extends Component {
   }
 
   _executeAction(action, routeName, params) {
-
-      console.log(action, routeName, params, this.props.routes[routeName]);
     if (routeName && !this.props.routes[routeName]) {
       // Route does not exist
       return;

@@ -17,8 +17,6 @@ import {
 
 import {Router, Actions} from './Router';
 
-import Scene from './Scene';
-
 class Page1Screen extends Component {
   render() {
     return (
@@ -95,9 +93,14 @@ const routes = {
 const {width, height} = Dimensions.get('window');
 const animations = {
   'default': {
-    duration: 250,
+    config: {
+      duration: 222
+    },
     push: {
-      duration: 1000,
+      config: {
+        duration: 111,
+        fn: Animated.spring
+      },
       fn: progress => {
         const translateX = progress.interpolate({
           inputRange: [0, 1],
@@ -113,15 +116,13 @@ const animations = {
     },
     blur: {
       fn: progress => {
-        const rotate = progress.interpolate({
+        const opacity = progress.interpolate({
           inputRange: [0, 1],
-          outputRange: ['0deg', '90deg'],
+          outputRange: [1, 0.5],
         });
 
         return {
-          transform: [{
-            rotate
-          }]
+          opacity
         }
       }
     },
@@ -141,23 +142,29 @@ const animations = {
     },
     pop: {
       fn: progress => {
-        const rotate = progress.interpolate({
+        const translateY = progress.interpolate({
           inputRange: [0, 1],
-          outputRange: ['90deg', '0deg'],
+          outputRange: [-height, 0],
         });
 
         return {
           transform: [{
-            rotate
+            translateY
           }]
         }
       }
     },
   },
   custom: [{
+    config: {
+      duration: 333
+    },
     from: 'page1',
     to: 'page2',
     push: {
+      config: {
+        duration: 444,
+      },
       fn: progress => {
         const translateX = progress.interpolate({
           inputRange: [0, 1],
@@ -200,10 +207,13 @@ const animations = {
       }
     },
     pop: {
+      config: {
+        duration: 2000
+      },
       fn: progress => {
         const rotate = progress.interpolate({
           inputRange: [0, 1],
-          outputRange: ['90deg', '0deg'],
+          outputRange: ['360deg', '0deg'],
         });
 
         return {
@@ -212,8 +222,7 @@ const animations = {
           }]
         }
       }
-    },
-    duration: 250
+    }
   }]
 }
 
