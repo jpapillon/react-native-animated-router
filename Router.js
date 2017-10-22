@@ -46,6 +46,18 @@ export const Actions = {
 }
 
 export class Router extends Component {
+  static getState() {
+    const inst = RouterSingleton.getInstance();
+    const index = inst.state.stack.length - 1;
+    const current = inst.state.stack[index];
+    const state = {
+      routeName: current.routeName,
+      params: current.params || {},
+      index
+    };
+    return state;
+  }
+
   _animationManager = new AnimationManager(this.props.animations)
 
   state = {
@@ -55,6 +67,12 @@ export class Router extends Component {
   }
 
   _queue = []
+
+  constructor(props) {
+    super(props);
+
+    RouterSingleton.setInstance(this);
+  }
 
   _triggerQueue() {
     if (!this._updating && this._queue.length > 0) {
@@ -70,23 +88,6 @@ export class Router extends Component {
     }
   }
 
-  constructor(props) {
-    super(props);
-
-    RouterSingleton.setInstance(this);
-  }
-
-  componentWillMount() {
-    const newStack = this.state.stack;
-    newStack.push({
-      routeName: Object.keys(this.props.routes)[0]
-    });
-    this.setState({
-      action: 'reset',
-      stack: newStack
-    });
-  }
-
   _executeAction(action, routeName, params) {
     if (routeName && !this.props.routes[routeName]) {
       // Route does not exist
@@ -96,7 +97,8 @@ export class Router extends Component {
     if (action === 'push') {
       const newStack = this.state.stack;
       newStack.push({
-        routeName
+        routeName,
+        params
       });
       this.setState({
         action: 'push',
@@ -181,6 +183,17 @@ export class Router extends Component {
       this._updating = false;
       this._triggerQueue();
     }
+  }
+
+  componentWillMount() {
+    const newStack = this.state.stack;
+    newStack.push({
+      routeName: Object.keys(this.props.routes)[0]
+    });
+    this.setState({
+      action: 'reset',
+      stack: newStack
+    });
   }
 
   render() {
