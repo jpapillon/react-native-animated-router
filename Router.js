@@ -204,7 +204,7 @@ export class Router extends Component {
             route._isReady = false;
             const action = this._getAction(index);
             const animation = this._getAnimation(index, action);
-            const RouteScreen = this.props.routes[route.routeName];
+            const RouteScreen = this.props.routes[route.routeName].screen;
             return (
               <Scene
                 key={index}

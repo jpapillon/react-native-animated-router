@@ -85,9 +85,18 @@ class Page3Screen extends Component {
 }
 
 const routes = {
-  page1: Page1Screen,
-  page2: Page2Screen,
-  page3: Page3Screen
+  page1: {
+    screen: Page1Screen,
+    path: '/page1'
+  },
+  page2: {
+    screen: Page2Screen,
+    path: '/page2'
+  },
+  page3: {
+    screen: Page3Screen,
+    path: '/page3'
+  }
 };
 
 const {width, height} = Dimensions.get('window');
