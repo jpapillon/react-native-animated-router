@@ -1,22 +1,28 @@
 {
-	"name": "AnimatedRouter",
-	"version": "0.0.1",
-	"private": true,
-	"scripts": {
-		"start": "node node_modules/react-native/local-cli/cli.js start",
-		"test": "jest"
-	},
-	"dependencies": {
-		"react": "16.0.0-beta.5",
-		"react-native": "0.49.1"
-	},
-	"devDependencies": {
-		"babel-jest": "21.2.0",
-		"babel-preset-react-native": "4.0.0",
-		"jest": "21.2.1",
-		"react-test-renderer": "16.0.0-beta.5"
-	},
-	"jest": {
-		"preset": "react-native"
-	}
+  "name": "react-native-animated-router",
+  "version": "0.0.1",
+  "description": "React Native router with full control on transition animations.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jpapillon@bitbucket.org/jpapillon/react-native-animated-router.git"
+  },
+  "keywords": [
+    "react",
+    "native",
+    "router",
+    "animation",
+    "animated",
+    "transition"
+  ],
+  "author": "Jeremie Papillon",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/jpapillon/react-native-animated-router#readme",
+  "dependencies": {
+    "react": "16.0.0-beta.5",
+    "react-native": "0.49.1"
+  }
 }

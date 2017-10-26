@@ -15,7 +15,7 @@ import {
   Dimensions
 } from 'react-native';
 
-import {Router, Actions} from './Router';
+import {Router, Actions} from 'react-native-animated-router';
 
 class Page1Screen extends Component {
   render() {

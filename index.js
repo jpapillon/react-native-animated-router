@@ -1,4 +1,4 @@
-import { AppRegistry } from 'react-native';
-import App from './App';
+import {Router, Actions} from './Router';
 
-AppRegistry.registerComponent('AnimatedRouter', () => App);
+exports.Router = Router;
+exports.Actions = Actions;
