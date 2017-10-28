@@ -240,7 +240,7 @@ export class Router extends Component {
                   this._onAnimationDone(index);
                 }}
               >
-                <RouteScreen />
+                <RouteScreen {...route.params} />
               </Scene>
             );
           })
