@@ -16,13 +16,16 @@ import {
 } from 'react-native';
 
 import {Router, Actions} from 'react-native-animated-router';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
+
+
 
 class Page1Screen extends Component {
   render() {
     return (
       <View style={styles.container}>
         <Text>PAGE 1!</Text>
-        <TouchableOpacity onPress={() => Actions.push("page2", {})}>
+        <TouchableOpacity onPress={() => Actions.modal("page2", {})}>
           <Text>push page 2</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Actions.pop()}>
@@ -65,21 +68,11 @@ class Page2Screen extends Component {
 class Page3Screen extends Component {
   render() {
     return (
-      <View style={[styles.container, {backgroundColor: 'pink'}]}>
-        <Text>PAGE 3!</Text>
-        <TouchableOpacity onPress={() => Actions.push("page1", {})}>
-          <Text>push page 1</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => Actions.pop()}>
-          <Text>pop</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => Actions.reset()}>
-          <Text>reset</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => Actions.reset("page1", {})}>
-          <Text>reset to page1</Text>
-        </TouchableOpacity>
-      </View>
+      <ScrollableTabView tabBarPosition={'bottom'}>
+        <Page1Screen tabLabel="React" />
+        <Page2Screen tabLabel="Flow" />
+        <View tabLabel="Jest" />
+      </ScrollableTabView>
     )
   }
 }

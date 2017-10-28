@@ -53,58 +53,6 @@ export default class Scene extends Component {
     });
   }
 
-  _getPushAnimation() {
-    const translateX = this._progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [width, 0],
-    });
-
-    return {
-      transform: [{
-        translateX
-      }]
-    }
-  }
-
-  _getBlurAnimation() {
-    const scale = this._progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0.8, 1],
-    });
-
-    return {
-      transform: [{
-        scale
-      }]
-    }
-  }
-
-  _getFocusAnimation() {
-    const scale = this._progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0.8, 1],
-    });
-
-    return {
-      transform: [{
-        scale
-      }]
-    }
-  }
-
-  _getPopAnimation() {
-    const translateX = this._progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [width, 0],
-    });
-
-    return {
-      transform: [{
-        translateX
-      }]
-    }
-  }
-
   _getAnimation() {
     if (this.props.animation && this.props.animation.fn) {
       // Use given transition animation
@@ -118,8 +66,8 @@ export default class Scene extends Component {
         this._launchDecrement(nextProps.animation.config, () => this.props.onAnimationDone('blur'));
       } else if (nextProps.action === 'focus') {
         this._launchIncrement(nextProps.animation.config, () => this.props.onAnimationDone('focus'));
-      } else if (nextProps.action === 'pop') {
-        this._launchDecrement(nextProps.animation.config, () => this.props.onAnimationDone('pop'));
+      } else if (nextProps.action === 'pop' || nextProps.action === 'popModal') {
+        this._launchDecrement(nextProps.animation.config, () => this.props.onAnimationDone(nextProps.action));
       } else if (nextProps.action === 'reset') {
         this._progress.setValue(1);
         this.props.onAnimationDone('reset');

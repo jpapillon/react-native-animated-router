@@ -27,8 +27,13 @@ export const Actions = {
 
   pop() {
     const inst = RouterSingleton.getInstance();
+    let action = 'pop';
+    if (inst.state.stack[inst.state.stack.length - 1].action === 'modal') {
+      action = 'popModal';
+    }
+
     inst._queue.push({
-      action: 'pop',
+      action: action,
       routeName: inst.state.stack[inst.state.stack.length - 1].routeName
     });
     inst._triggerQueue();
@@ -38,6 +43,16 @@ export const Actions = {
     const inst = RouterSingleton.getInstance();
     inst._queue.push({
       action: 'reset',
+      routeName,
+      params
+    });
+    inst._triggerQueue();
+  },
+
+  modal(routeName, params) {
+    const inst = RouterSingleton.getInstance();
+    inst._queue.push({
+      action: 'modal',
       routeName,
       params
     });
@@ -77,8 +92,8 @@ export class Router extends Component {
   _triggerQueue() {
     if (!this._updating && this._queue.length > 0) {
       let queuedAction = this._queue.shift();
-      if (queuedAction.action === 'pop' && this.state.stack.length <= 1) {
-        // Don't pop more last scene
+      if ((queuedAction.action === 'pop' || queuedAction.action === 'popModal') && this.state.stack.length <= 1) {
+        // Don't pop the last scene
         return;
       }
 
@@ -94,19 +109,20 @@ export class Router extends Component {
       return;
     }
 
-    if (action === 'push') {
+    if (action === 'push' || action === 'modal') {
       const newStack = this.state.stack;
       newStack.push({
         routeName,
-        params
+        params,
+        action
       });
       this.setState({
-        action: 'push',
+        action,
         stack: newStack
       });
-    } else if (action === 'pop') {
+    } else if (action === 'pop' || action === 'popModal') {
       this.setState({
-        action: 'pop'
+        action: action
       });
     } else if (action === 'reset') {
       this.setState({
@@ -121,7 +137,7 @@ export class Router extends Component {
     const newStack = this.state.stack;
     newStack.pop();
     this.setState({
-      action: 'focus',
+      action: newStack[newStack.length - 1].action,
       stack: newStack
     });
   }
@@ -132,14 +148,21 @@ export class Router extends Component {
     if (index === nbScenes - 1) {
       // Last scene
       action = this.state.action;
-    } else {
-      // Other scenes
-      if (index === nbScenes - 2 && this.state.action === 'pop') {
+    } else if (index === nbScenes - 2) {
+      const scene = this.state.stack[index];
+      if (scene.action === 'modal' || this.state.action === 'modal' || this.state.action === 'popModal') {
+        // If previous scene is a modal OR current action is to deal with a modal, use previous action
+        action = scene.action;
+      } else if (this.state.action === 'pop') {
+        // If focus previous scene
         action = 'focus';
       } else {
         action = 'blur';
       }
+    } else {
+      action = this.state.stack[index].action;
     }
+
     return action;
   }
 
@@ -162,7 +185,7 @@ export class Router extends Component {
 
     if (this.state.stack.every(route => route._isReady)) {
       // Every route has finished with the animation
-      if (this.state.action === 'pop') {
+      if (this.state.action === 'pop' || this.state.action === 'popModal') {
         // Action was to pop the screen, pop it first and go
         this._removeAfterPop()
       } else {
@@ -201,8 +224,10 @@ export class Router extends Component {
       <View style={{flex: 1}}>
         {
           this.state.stack.map((route, index) => {
-            route._isReady = false;
             const action = this._getAction(index);
+            if (action !== route.action) {
+              route._isReady = false;
+            }
             const animation = this._getAnimation(index, action);
             const RouteScreen = this.props.routes[route.routeName].screen;
             return (

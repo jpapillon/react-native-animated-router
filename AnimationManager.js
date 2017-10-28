@@ -1,56 +1,99 @@
+import {Dimensions} from 'react-native';
+
+const {width, height} = Dimensions.get('window');
+
 const ANIMATION_CONFIG = {
   config: {
-    duration: 1
+    duration: 250
   },
-  push() {
-    const translateX = this._progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [width, 0],
-    });
 
-    return {
-      transform: [{
-        translateX
-      }]
+  push: {
+    fn: progress => {
+      const translateX = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [width, 0],
+      });
+
+      return {
+        transform: [{
+          translateX
+        }]
+      }
     }
   },
 
-  blur() {
-    const scale = this._progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0.8, 1],
-    });
+  blur: {
+    fn: progress => {
+      const translateX = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0.8, 1],
+      });
 
-    return {
-      transform: [{
-        scale
-      }]
+      return {
+        transform: [{
+          scale
+        }]
+      }
     }
   },
 
-  focus() {
-    const scale = this._progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0.8, 1],
-    });
+  focus: {
+    fn: progress => {
+      const translateX = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0.8, 1],
+      });
 
-    return {
-      transform: [{
-        scale
-      }]
+      return {
+        transform: [{
+          scale
+        }]
+      }
     }
   },
 
-  pop() {
-    const translateX = this._progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [width, 0],
-    });
+  pop: {
+    fn: progress => {
+      const translateX = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [width, 0],
+      });
 
-    return {
-      transform: [{
-        translateX
-      }]
+      return {
+        transform: [{
+          translateX
+        }]
+      }
+    }
+  },
+
+  modal: {
+    fn: progress => {
+      const translateY = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [height, 0],
+      });
+
+      return {
+        transform: [{
+          translateY
+        }]
+      }
+    }
+  },
+
+  popModal: {
+    fn: progress => {
+      const translateY = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [height, 0],
+      });
+
+      return {
+        transform: [{
+          translateY
+        }]
+      }
     }
   }
 };
@@ -88,11 +131,13 @@ export default class AnimationManager {
     }
 
     let animation = animationConfig[action];
-    if (animation.config) {
+    if (animation && animation.config) {
       config = {...config, ...animation.config};
     }
 
-    animation.config = config;
+    if (animation) {
+      animation.config = config;
+    }
 
     return animation;
   }
