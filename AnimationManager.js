@@ -103,21 +103,6 @@ export default class AnimationManager {
   constructor(config) {
     this._config = config;
     this._custom = config && config.custom || [];
-
-    const defaultConfig = (config && config.default) || {};
-    this._defaultConfig = {...ANIMATION_CONFIG, ...defaultConfig};
-    this._customConfig = (config && config.custom) || [];
-  }
-
-  _mergeConfigs(config1, config2) {
-    // Start with 'config'
-    let config = {...config1.config, ...config2.config};
-
-    // Then with action object
-    let actions = {};
-    Object.keys(config1).forEach(key => {
-      actions[key] = {...actions[key], ...config2[key]}
-    });
   }
 
   getAnimation(fromRoute, toRoute, action) {
@@ -179,6 +164,6 @@ export default class AnimationManager {
   }
 
   getDefaultAnimation(action) {
-    return this._defaultConfig[action];
+    return this._config[action];
   }
 }
