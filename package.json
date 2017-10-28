@@ -1,6 +1,6 @@
 {
   "name": "react-native-animated-router",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React Native router with full control on transition animations.",
   "main": "index.js",
   "scripts": {
