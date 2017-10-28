@@ -86,7 +86,7 @@ export default class Scene extends Component {
 
   render() {
     return (
-      <Animated.View style={[{position: 'absolute', width, height, backgroundColor: 'red'}, this._getAnimation()]}>
+      <Animated.View style={[{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}, this._getAnimation()]}>
         {this.props.children}
       </Animated.View>
     );
