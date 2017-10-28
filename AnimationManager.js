@@ -1,10 +1,11 @@
-import {Dimensions} from 'react-native';
+import {Dimensions, Animated} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 
 const ANIMATION_CONFIG = {
   config: {
-    duration: 250
+    duration: 250,
+    fn: Animated.timing
   },
 
   push: {
@@ -24,7 +25,7 @@ const ANIMATION_CONFIG = {
 
   blur: {
     fn: progress => {
-      const translateX = progress.interpolate({
+      const scale = progress.interpolate({
         inputRange: [0, 1],
         outputRange: [0.8, 1],
       });
@@ -39,7 +40,7 @@ const ANIMATION_CONFIG = {
 
   focus: {
     fn: progress => {
-      const translateX = progress.interpolate({
+      const scale = progress.interpolate({
         inputRange: [0, 1],
         outputRange: [0.8, 1],
       });
@@ -100,46 +101,81 @@ const ANIMATION_CONFIG = {
 
 export default class AnimationManager {
   constructor(config) {
+    this._config = config;
+    this._custom = config && config.custom || [];
+
     const defaultConfig = (config && config.default) || {};
     this._defaultConfig = {...ANIMATION_CONFIG, ...defaultConfig};
     this._customConfig = (config && config.custom) || [];
   }
 
+  _mergeConfigs(config1, config2) {
+    // Start with 'config'
+    let config = {...config1.config, ...config2.config};
+
+    // Then with action object
+    let actions = {};
+    Object.keys(config1).forEach(key => {
+      actions[key] = {...actions[key], ...config2[key]}
+    });
+  }
+
   getAnimation(fromRoute, toRoute, action) {
-    let config = this._defaultConfig.config;
-    if (this._defaultConfig[action] && this._defaultConfig[action].config) {
-      config = {...config, ...this._defaultConfig[action].config};
+    if (!ANIMATION_CONFIG[action]) {
+      // Unsupported action
+      return null;
     }
 
-    // Get custom animation
-    let animationConfig = this._customConfig.find(anim => (
-      (anim.from === fromRoute && anim.to === toRoute && anim[action])
-    ));
+    let config = ANIMATION_CONFIG.config;
+    let fn = ANIMATION_CONFIG[action].fn;
 
-    // Use custom config base configuration
-    if (this._customConfig.config) {
-      config = {...config, ...this._customConfig.config};
+    if (this._config) {
+      // Check for defined default configs
+      if (this._config.default) {
+        if (this._config.default.config) {
+          // Default configs were defined
+          config = {...config, ...this._config.default.config};
+        }
+
+        if (this._config.default[action]) {
+          if (this._config.default[action].config) {
+            // Default action configs were defined
+            config = {...config, ...this._config.default[action].config};
+          }
+
+          if (this._config.default[action].fn) {
+            // Default action function was defined
+            fn = this._config.default[action].fn;
+          }
+        }
+      }
+
+      // Check for specific custom configs
+      const customConfig = this._custom.find(anim => (
+        (anim.from === fromRoute && anim.to === toRoute)
+      ));
+
+      if (customConfig) {
+        if (customConfig.config) {
+          // General config was set for this custom config
+          config = {...config, ...customConfig.config};
+        }
+
+        if (customConfig[action]) {
+          if (customConfig[action].config) {
+            // Custom action configs were defined
+            config = {...config, ...customConfig[action].config};
+          }
+
+          if (customConfig[action].fn) {
+            // Custom action function was defined
+            fn = customConfig[action].fn;
+          }
+        }
+      }
     }
 
-    if (!animationConfig) {
-      // No custom animation found, get the default ones from the given config
-      animationConfig = this._defaultConfig;
-    }
-
-    if (animationConfig.config) {
-      config = {...config, ...animationConfig.config};
-    }
-
-    let animation = animationConfig[action];
-    if (animation && animation.config) {
-      config = {...config, ...animation.config};
-    }
-
-    if (animation) {
-      animation.config = config;
-    }
-
-    return animation;
+    return {config, fn};
   }
 
   getDefaultAnimation(action) {

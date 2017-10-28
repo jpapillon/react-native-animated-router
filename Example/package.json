@@ -8,7 +8,7 @@
 	},
 	"dependencies": {
 		"react": "16.0.0-beta.5",
-		"react-native": "0.49.1",
+		"react-native": "0.49.5",
 		"react-native-animated-router": "file:../",
 		"react-native-scrollable-tab-view": "0.8.0"
 	},
