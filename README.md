@@ -1,6 +1,8 @@
 # react-native-animated-router
 React Native router with full control on transition animations.
 
+**This library is currently in development.**
+
 ## Installation
 ```bash
 npm install react-native-animated-router --save
